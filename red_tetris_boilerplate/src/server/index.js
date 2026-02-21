@@ -1,8 +1,7 @@
 import fs  from 'fs'
 import debug from 'debug'
 
-const logerror = debug('tetris:error')
-  , loginfo = debug('tetris:info')
+const logerror = debug('tetris:error'), loginfo = debug('tetris:info')
 
 const initApp = (app, params, cb) => {
   const {host, port} = params
