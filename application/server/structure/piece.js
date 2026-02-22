@@ -1,4 +1,4 @@
-import { PIECES } from "../../common/logic";
+import { PIECES } from "../../common/logic.js";
 
 export class Piece{
     constructor(type){

@@ -4,7 +4,10 @@ import express from 'express';
 import {Server} from 'socket.io';
 import { fileURLToPath } from 'url';
 import { createServer } from 'http';
+import {Game} from './structure/game.js'
+import {Player} from './structure/player.js'
 
+const DEBUG = true
 const PORT = 4044
 const HOST = '0.0.0.0'
 
@@ -15,7 +18,11 @@ const __dirname = path.dirname(__filename)
 
 const app = express()
 const httpServer = createServer(app)
-const io = new Server(httpServer)
+const io = new Server(httpServer, {
+    cors: {
+        origin : "*"
+    }
+})
 
 app.use(express.static(path.join(__dirname, '../client/dist')))
 
@@ -23,8 +30,38 @@ app.use((req, res) => {
     res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 });
 
+const games = new Map()
+
 io.on('connection', (socket) => {
     info('new connection from : ', socket.id)
+
+    socket.on('join', (data) => {
+        if (!data) return
+        const {room, username} = data
+        if (!room || !username) return;
+        if (DEBUG) {info('room : ', room);info('username : ', username)}
+        
+        socket.join(room)
+        info(`[+] ${username} (${socket.id}) joining : ${room}`)
+
+        if (!games.has(room)) games.set(room, new Game(room));
+        const game = games.get(room);
+
+        if (game.started) {
+            socket.emit('error', 'already started in this room');
+            return;
+        }
+        
+        const player = new Player(socket.id, username);
+        game.newPlayer(player);
+
+        io.to(room).emit('update', {
+            name: room,
+            players: game.players,
+            started: game.started
+        });
+
+    })
 })
 
 httpServer.listen(PORT, () => {

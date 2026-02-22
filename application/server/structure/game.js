@@ -1,4 +1,4 @@
-import { Piece } from "./piece";
+import { Piece } from "./piece.js";
 
 const IN_STACK = 20
 

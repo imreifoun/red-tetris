@@ -1,7 +1,7 @@
 export class Player{
-    constructor(id, name){
+    constructor(id, username){
         this.id = id
-        this.name = name
+        this.username = username
         this.host = false
         this.lost = false
         this.ready = false
