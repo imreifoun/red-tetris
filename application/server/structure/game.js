@@ -1,5 +1,6 @@
-import { rotate } from "../../common/logic";
 import { Piece } from "./piece";
+
+const IN_STACK = 20
 
 export class Game{
 
@@ -14,6 +15,12 @@ export class Game{
     newPlayer(player){
         if (this.players.length == 0) player.host = true
         this.players.push(player)
+    }
+
+    winnerPlayer() {
+        const winner = this.players.filter(plyr => !plyr.lost)
+        if (winner.length > 1) return winner[0]
+        return null
     }
 
     deletePlayer(player){
@@ -32,17 +39,14 @@ export class Game{
 
     start(){
         this.stack = []
-        this.generated(5)
+        this.generated(IN_STACK)
         this.players.forEach(plyr => plyr.reset())
         this.started = true
     }
 
+    more() { while (IN_STACK >= this.stack.length){ this.generated(IN_STACK) } } 
 
-    generated(seq){
-        let i = 0;
-        while (i < seq){
-            this.stack.push(new Piece(Piece.randomPiece()))
-            i++;
-        } 
-    }
+    findPiece(index) { this.more(); return this.stack[index]}
+
+    generated(seq) { for(let i = 0; i < seq; i++) { this.stack.push(new Piece(Piece.randomPiece()))} }
 }
