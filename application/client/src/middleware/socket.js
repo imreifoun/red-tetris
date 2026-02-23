@@ -18,10 +18,9 @@ const socketMiddleware = (store) => {
             case 'socket/join':
                 if (socket) socket.emit('join', action.payload);
                 break;
-            
-            
-
-                
+            case 'socket/start':
+                if (socket) socket.emit('start', action.payload);
+                break;
 
         }
         return next(action);

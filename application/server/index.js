@@ -36,7 +36,7 @@ io.on('connection', (socket) => {
     info('new connection from : ', socket.id)
 
     socket.on('join', (data) => {
-        if (!data) return
+        if (!data) return;
         const {room, username} = data
         if (!room || !username) return;
         if (DEBUG) {info('room : ', room);info('username : ', username)}
@@ -60,6 +60,26 @@ io.on('connection', (socket) => {
             players: game.players,
             started: game.started
         });
+    })
+
+    socket.on('start', (date) => {
+        if (!data) 
+            return;
+        const {room} = data
+        if (!room) 
+            return;
+        if (DEBUG) {info('start room : ', room);}
+        const game = games.get(room);
+        if (game) {
+            const player = game.players.find(p => p.id === socket.id);
+            if (player && player.host) {
+                game.start();
+                io.to(room).emit('started', {
+                    stack: game.stack,
+                    players: game.players
+                });
+            }
+        }
 
     })
 })

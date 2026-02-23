@@ -12,8 +12,8 @@ export class Piece{
                 this.shape = rotate(this.shape)
             }
         }
-
     }
+
     static randomPiece(){
         const types = Object.keys(PIECES)
         return types[Math.floor(Math.random() * types.length)]

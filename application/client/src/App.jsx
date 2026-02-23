@@ -71,12 +71,13 @@ function TetrisUI() {
 
 function BoarderUI (){
 	const {board} = useSelector(state => state.game)
+
 	return (
 		<div className='board'>
 			{board.map((rows, y) => (
 				<div key={y} className='flex justify-center items-center'>
-					{rows.map((col, x) => (
-						<div key={x} className={`h-6 w-6 bg-white border`}>
+					{rows.map((cell, x) => (
+						<div key={x} className={`h-6 w-6 bg-black border border-white`}>
 
 						</div>
 					))}
@@ -104,14 +105,18 @@ function App() {
 	}, [dispatch])
 
 	if (!room || ! username)
-		return <BoarderUI />
+		return <SetupUI />
 	
-	
+	const handleStart = () => {
+		dispatch({ type: 'socket/start', payload: { room } });
+	};
+
+
 	return (
 		<div className="p-4">
 			<h1>ROOM ID: {room}</h1>
 			<h1>PLAYER ID: {username}</h1>
-			<PlayersUI/>
+			<BoarderUI/>
 			
 		</div>
 	)
