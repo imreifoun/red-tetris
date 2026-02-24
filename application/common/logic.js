@@ -9,7 +9,8 @@ export const PIECES = {
             [0, 0, 0, 0],
             [0, 0, 0, 0]
         ],
-        color: 'cyan'
+        color: 'cyan',
+        wind : 'cyan-500'
     },
     J: {
         shape: [
@@ -17,7 +18,8 @@ export const PIECES = {
             [1, 1, 1],
             [0, 0, 0]
         ],
-        color: 'blue'
+        color: 'blue',
+        wind : 'blue-500'
     },
     L: {
         shape: [
@@ -25,14 +27,16 @@ export const PIECES = {
             [1, 1, 1],
             [0, 0, 0]
         ],
-        color: 'orange'
+        color: 'orange',
+        wind : 'orange-500'
     },
     O: {
         shape: [
             [1, 1],
             [1, 1]
         ],
-        color: 'yellow'
+        color: 'yellow',
+        wind : 'yellow-500'
     },
     S: {
         shape: [
@@ -40,7 +44,8 @@ export const PIECES = {
             [1, 1, 0],
             [0, 0, 0]
         ],
-        color: 'green'
+        color: 'green',
+        wind : 'green-500'
     },
     T: {
         shape: [
@@ -48,7 +53,8 @@ export const PIECES = {
             [1, 1, 1],
             [0, 0, 0]
         ],
-        color: 'purple'
+        color: 'purple',
+        wind : 'purple-500'
     },
     Z: {
         shape: [
@@ -56,7 +62,8 @@ export const PIECES = {
             [0, 1, 1],
             [0, 0, 0]
         ],
-        color: 'red'
+        color: 'red',
+        wind : 'red-500'
     }
 };
 

@@ -1,8 +1,9 @@
-import { PIECES } from "../../common/logic.js";
+import { PIECES, rotate } from "../../common/logic.js";
 
 export class Piece{
     constructor(type){
         this.type = type
+        this.wind = PIECES[type].wind
         this.shape = PIECES[type].shape
         this.color = PIECES[type].color
         let flip = Math.floor(Math.random() * 2)

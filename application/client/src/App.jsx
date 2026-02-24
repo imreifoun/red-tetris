@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import { setup } from './redux/slice'
+import { new_board, setup } from './redux/slice'
 import SetupUI from './components/SetupUI'
 import PlayersUI from './components/PlayersUI'
+import { getNew } from './dev-only/pieces-dev'
+import { useRef } from 'react'
+import { clearLines, insertPiece, isValidMove } from '../../common/logic'
 
 function TetrisUI() {
   return (
@@ -69,18 +72,116 @@ function TetrisUI() {
   )
 }
 
+const POS_X = 3
+const POS_Y = 0
+
 function BoarderUI (){
-	const {board} = useSelector(state => state.game)
+	const dispatch = useDispatch();
+	const started = true
+	const {board, stack} = useSelector(state => state.game)
+	const [Pies, SetPies] = useState(getNew())
+
+	const positionRef = useRef({ x: POS_X, y: POS_Y })
+	const [position, setPosition] = useState({ x: POS_X, y: POS_Y })
+
+	const Movement = ({ dx, dy }) => {
+		const newX = positionRef.current.x + dx
+		const newY = positionRef.current.y + dy
+
+		if (isValidMove(board, Pies.shape, newX, newY)) {
+			positionRef.current = { x: newX, y: newY }
+			setPosition(positionRef.current) 
+		} else {
+			const placedBoard = insertPiece(board, Pies.shape, positionRef.current.x, positionRef.current.y, Pies.color)
+			const { board: clearedBoard } = clearLines(placedBoard)
+			
+			dispatch(new_board({ board: clearedBoard }))
+			SetPies(getNew())
+
+			positionRef.current = { x: POS_X, y: POS_Y }
+			setPosition(positionRef.current)
+		}
+	}
+	
+	const handleMovement = (event) => {
+		switch(event.key){
+			case 'ArrowLeft':
+				return Movement({dx: -1, dy: 0})
+			case 'ArrowRight':
+				return Movement({dx: 1, dy: 0})
+			case 'ArrowDown':
+				return Movement({dx: 0, dy: 1})
+			case 'ArrowUp':
+				return 
+		}
+		
+	}
+
+	const LOOP = useRef(null)
+
+	const handleMovementRef = useRef(handleMovement)
+
+	useEffect(() => {
+		handleMovementRef.current = handleMovement
+	})
+
+	useEffect(() => {
+		const handler = (e) => handleMovementRef.current(e)
+
+		window.addEventListener('keydown', handler)
+
+		return () => window.removeEventListener('keydown', handler)
+	}, [])
+
+
+	const MovementRef = useRef(Movement)
+
+	useEffect(() => { MovementRef.current = Movement })
+
+	useEffect(() => {
+		if (!started) return
+
+		LOOP.current = setInterval(() => {
+			MovementRef.current({ dx: 0, dy: 1 })
+		}, 1000)
+
+		return () => clearInterval(LOOP.current)
+	}, [])
 
 	return (
 		<div className='board'>
 			{board.map((rows, y) => (
 				<div key={y} className='flex justify-center items-center'>
-					{rows.map((cell, x) => (
-						<div key={x} className={`h-6 w-6 bg-black border border-white`}>
+					{rows.map((cell, x) => {
+						const py = y - position.y
+						const px = x - position.x
 
-						</div>
-					))}
+						const isPiece =
+							py >= 0 &&
+							px >= 0 &&
+							py < Pies.shape.length &&
+							px < Pies.shape[0].length &&
+							Pies.shape[py][px]
+
+						let color = 'black'
+
+						if (cell !== 0) {
+							color = cell // saved block
+						}
+
+						if (isPiece) {
+							color = Pies.color // falling piece overrides
+						}
+
+						return (
+							<div
+							key={x}
+							style={{ backgroundColor: color }}
+							className="h-6 w-6 border border-white"
+							></div>
+						)
+					})}
+
 				</div>
 			))}
 		</div>
@@ -100,12 +201,14 @@ function App() {
 			dispatch(setup({room: matched[1], username: matched[2]}))
 			dispatch({type: 'socket/connect'})
 			dispatch({type: 'socket/join', payload : {room: matched[1], username: matched[2]}})
+			
 		}
 
 	}, [dispatch])
 
 	if (!room || ! username)
 		return <SetupUI />
+	
 	
 	const handleStart = () => {
 		dispatch({ type: 'socket/start', payload: { room } });

@@ -1,14 +1,15 @@
 import {createSlice} from '@reduxjs/toolkit'
 
-export const ROWS = 10
-export const COLS = 20
+export const ROWS = 20
+export const COLS = 10
 
 const initialState = {
     room: null,
+    stack: [],
     players: [],
     username: null,
     started: false,
-    board: Array.from({ length: 20 }, () => Array(10).fill(0)),
+    board: Array.from({ length: ROWS }, () => Array(COLS).fill(0)),
 }
 
 const slice = createSlice({
@@ -22,9 +23,12 @@ const slice = createSlice({
         update : (state, action) => {
             state.players = action.payload.players
             state.started = action.payload.started
-        }
+        },
+        new_board: (state, action) => {
+            state.board = action.payload.board;
+        },
     }
 })
 
-export const {setup, update} = slice.actions
+export const {setup, update, new_board} = slice.actions
 export default slice.reducer

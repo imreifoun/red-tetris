@@ -62,7 +62,7 @@ io.on('connection', (socket) => {
         });
     })
 
-    socket.on('start', (date) => {
+    socket.on('start', (data) => {
         if (!data) 
             return;
         const {room} = data
