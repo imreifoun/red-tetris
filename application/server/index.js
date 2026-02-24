@@ -82,6 +82,21 @@ io.on('connection', (socket) => {
         }
 
     })
+    socket.on('disconnect', () => {
+        console.log('Disconnected:', socket.id);
+        games.forEach((game, room) => {
+            const remaining = game.deletePlayer(socket.id);
+            if (remaining === 0) {
+                games.delete(room);
+            } else {
+                io.to(room).emit('update', {
+                    name: room,
+                    players: game.players,
+                    started: game.started
+                });
+            }
+        });
+    });
 })
 
 httpServer.listen(PORT, () => {

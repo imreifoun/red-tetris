@@ -2,75 +2,67 @@ import { useState, useEffect } from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import { new_board, setup } from './redux/slice'
 import SetupUI from './components/SetupUI'
-import PlayersUI from './components/PlayersUI'
+import SidePanelUI from './components/PlayersUI'
 import { getNew } from './dev-only/pieces-dev'
 import { useRef } from 'react'
-import { clearLines, insertPiece, isValidMove } from '../../common/logic'
+import { clearLines, insertPiece, isValidMove, rotate } from '../../common/logic'
 
 function TetrisUI() {
-  return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-white text-black px-4">
 
-      <div className="flex items-center gap-4 mb-6">
-        <div className="bg-white flex flex-row  border-2 shadow-lg ">  
-			<div className='w-16 border bg-black flex justify-center items-center'>
-				<img src="/game.svg" alt="game icon" className="w-10 h-10" />
+	return (
+		<div className="h-screen bg-black text-white flex flex-col items-center justify-center px-6 ">
+
+		{/* MAIN */}
+		<div className="flex gap-10">
+
+			{/* BOARD */}
+			<div className="bg-gray-900 border-gray-500 border  shadow-2xl backdrop-blur-md">
+				<BoarderUI/>
 			</div>
-			<div>
-				<div className="flex items-center gap-4 m-2">
-					<h1 className="text-2xl font-semibold tracking-wide">TETRIS</h1>
+
+			{/* SIDE PANEL */}
+			<div className="flex flex-col gap-6 w-52">
+
+				{/* HEADER */}
+				<div className="flex items-center gap-4  border border-white/10 bg-white/5 backdrop-blur-md px-6 py-3 rounded-xl shadow-lg">
+					<div className="w-14 h-14 bg-back text-black flex items-center justify-center rounded-lg">
+						<img src="/game.svg" alt="game icon" className="w-8 h-8" />
+					</div>
+					<div>
+						<h1 className="text-2xl font-bold tracking-widest">TETRIS</h1>
+						<p className="text-xs text-white/50">
+							ROOM ID: <span className="text-white font-semibold">#367363</span>
+						</p>
+					</div>
 				</div>
 
-				<p className="text-gray-700 text-sm mx-2 mb-2 text-center">
-					ROOM ID : <span className="text-gray-950 font-bold">#367363</span>
-				</p>
+
+				{/* NEXT */}
+				<div className="bg-white/5 border border-white/10 p-4 rounded-xl backdrop-blur-md shadow-lg">
+					<h2 className="text-sm uppercase tracking-wider text-white/60 mb-2">Next</h2>
+					<div className="w-24 h-24 bg-black border border-white/10 mx-auto rounded flex items-center justify-center" />
+				</div>
+
+				{/* SCORE */}
+				<div className="bg-white/5 border border-white/10 p-4 rounded-xl text-center backdrop-blur-md shadow-lg">
+					<h2 className="text-sm uppercase tracking-wider text-white/60">Score</h2>
+					<p className="text-3xl font-bold mt-2">0</p>
+				</div>
+
+				{/* CONTROLS */}
+				<div className="bg-white/5 border border-white/10 p-4 rounded-xl text-xs text-white/70 backdrop-blur-md shadow-lg space-y-1">
+					<p>← → Move</p>
+					<p>↑ Rotate</p>
+					<p>↓ Soft drop</p>
+					<p>Space Hard drop</p>
+				</div>
+
 			</div>
 		</div>
-      </div>
-
-      {/* Main game area */}
-      <div className="flex flex-row gap-8">
-
-        {/* Game board */}
-        <div className="bg-white/5 border border-white/20 p-2 rounded-lg shadow-lg">
-          <div className="grid grid-rows-20 grid-cols-10 gap-[1px] bg-black rounded">
-            {/* Generate Tetris grid dynamically or placeholder */}
-            {Array.from({ length: 200 }).map((_, i) => (
-              <div
-                key={i}
-                className="w-6 h-6 bg-black border border-white/10"
-              />
-            ))}
-          </div>
-        </div>
-
-	
-        <div className="flex flex-col gap-6">
-
-			<div className="bg-black border-2 border-black p-4 shadow-md text-center">
-				<h2 className="font-bold mb-2 text-white border-2">Next</h2>
-				<div className="w-24 h-24 bg-black mx-auto flex justify-center items-center rounded">
-				{/* Next piece grid */}
-				</div>
-			</div>
-
-			<div className="bg-black border-2 border-black p-4 shadow-md text-center">
-				<h2 className="font-bold mb-2 text-white border-2">Score</h2>
-				<p className="text-xl font-bold text-white">0</p>
-			</div>
-
-			<div className="bg-black border-2 border-black text-white p-4 shadow-md text-center">
-				<p>Arrow keys → Move</p>
-				<p>↑ → Rotate</p>
-				<p>↓ → Soft drop</p>
-				<p>Space → Hard drop</p>
-			</div>
-
-        </div>
-      </div>
-    </div>
-  )
+		</div>
+	)
 }
+
 
 const POS_X = 3
 const POS_Y = 0
@@ -84,6 +76,12 @@ function BoarderUI (){
 	const positionRef = useRef({ x: POS_X, y: POS_Y })
 	const [position, setPosition] = useState({ x: POS_X, y: POS_Y })
 
+	const reInit = () => {
+		SetPies(getNew())
+		positionRef.current = { x: POS_X, y: POS_Y }
+		setPosition(positionRef.current)
+	}
+
 	const Movement = ({ dx, dy }) => {
 		const newX = positionRef.current.x + dx
 		const newY = positionRef.current.y + dy
@@ -91,7 +89,11 @@ function BoarderUI (){
 		if (isValidMove(board, Pies.shape, newX, newY)) {
 			positionRef.current = { x: newX, y: newY }
 			setPosition(positionRef.current) 
-		} else {
+		} else if (isValidMove(board, Pies.shape, positionRef.current.x, newY)){
+			positionRef.current = { x: positionRef.current.x, y: newY }
+			setPosition(positionRef.current) 
+		}
+		else{
 			const placedBoard = insertPiece(board, Pies.shape, positionRef.current.x, positionRef.current.y, Pies.color)
 			const { board: clearedBoard } = clearLines(placedBoard)
 			
@@ -112,11 +114,25 @@ function BoarderUI (){
 			case 'ArrowDown':
 				return Movement({dx: 0, dy: 1})
 			case 'ArrowUp':
-				return 
-		}
-		
-	}
+				const rotation = rotate(Pies.shape)
+				if (isValidMove(board, rotation, positionRef.current.x, positionRef.current.y))
+					SetPies((prev) => ({...prev, shape : rotation}))
+				return
 
+			case ' ': 
+				while (isValidMove(board, Pies.shape, positionRef.current.x, positionRef.current.y + 1)) {
+					positionRef.current.y += 1;
+					setPosition(positionRef.current)
+				}
+				const placedBoard = insertPiece(board, Pies.shape, positionRef.current.x, positionRef.current.y, Pies.color)
+				const { board: clearedBoard } = clearLines(placedBoard)
+				dispatch(new_board({ board: clearedBoard }))
+
+				return reInit()
+
+		}
+	}	
+		
 	const LOOP = useRef(null)
 
 	const handleMovementRef = useRef(handleMovement)
@@ -149,9 +165,9 @@ function BoarderUI (){
 	}, [])
 
 	return (
-		<div className='board'>
+		<div className=''>
 			{board.map((rows, y) => (
-				<div key={y} className='flex justify-center items-center'>
+				<div key={y} className='flex justify-center items-center '>
 					{rows.map((cell, x) => {
 						const py = y - position.y
 						const px = x - position.x
@@ -166,20 +182,14 @@ function BoarderUI (){
 						let color = 'black'
 
 						if (cell !== 0) {
-							color = cell // saved block
+							color = cell
 						}
 
 						if (isPiece) {
-							color = Pies.color // falling piece overrides
+							color = Pies.color
 						}
 
-						return (
-							<div
-							key={x}
-							style={{ backgroundColor: color }}
-							className="h-6 w-6 border border-white"
-							></div>
-						)
+						return (<div key={x} style={{ backgroundColor: color, border: '1px solid rgba(255,255,255,0.03)' }} className="h-[30px] w-[30px] border-black "></div>)
 					})}
 
 				</div>
@@ -216,15 +226,17 @@ function App() {
 
 
 	return (
-		<div className="p-4">
-			<h1>ROOM ID: {room}</h1>
-			<h1>PLAYER ID: {username}</h1>
-			<BoarderUI/>
-			
-		</div>
+		<div className=''>
+			<TetrisUI/>
+		</div>	
 	)
 }
 
 //http://localhost:5173/#123@areifoun
+/*
+<h1>ROOM ID: {room}</h1>
+<h1>PLAYER ID: {username}</h1>
+<TetrisUI/>
+*/
 
 export default App
