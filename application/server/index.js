@@ -6,7 +6,10 @@ import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 import {Game} from './structure/game.js'
 import {Player} from './structure/player.js'
+import { createTetrisServer } from './app.js';
 
+
+createTetrisServer({ port: 4045, host: "0.0.0.0", debugMode: true });
 const DEBUG = true
 const PORT = 4044
 const HOST = '0.0.0.0'

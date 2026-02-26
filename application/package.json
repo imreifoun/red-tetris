@@ -4,7 +4,10 @@
   "description": "",
   "main": "server/index.js",
   "scripts": {
-    "dev": "DEBUG=server:* nodemon node server/index.js"
+    "dev": "DEBUG=server:* nodemon node server/index.js",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
@@ -15,5 +18,18 @@
     "express": "^5.2.1",
     "nodemon": "^3.1.14",
     "socket.io": "^4.8.3"
+  },
+  "devDependencies": {
+    "@reduxjs/toolkit": "^2.11.2",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@vitejs/plugin-react": "^5.1.4",
+    "@vitest/coverage-v8": "^4.0.18",
+    "jsdom": "^28.1.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "react-redux": "^9.2.0",
+    "socket.io-client": "^4.8.3",
+    "vitest": "^4.0.18"
   }
 }
