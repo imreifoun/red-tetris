@@ -1,11 +1,22 @@
-import { useSelector } from "react-redux"
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux"
 
 const PlayersUI = () => {
 
-	const { players = [], started } = useSelector(state => state.game)
+	const {room, username, players = [], started, score } = useSelector(state => state.game)
+
+	const dispatch = useDispatch()
+
+	const handleStart = () => {
+    	dispatch({ type: 'socket/start', payload: { room } });
+  	};
+
+	useEffect(() => {
+		return;
+	}, [started, players])
 
 	return (
-		<div className="p-6 max-w-md h-[500px] flex flex-col justify-between overflow-scroll mx-auto bg-white shadow-xl rounded-2xl">
+		<div className="p-6 max-w-md h-125 flex flex-col justify-between overflow-scroll mx-auto bg-black border shadow-xl ">
 			
 			<div>
 
@@ -26,13 +37,26 @@ const PlayersUI = () => {
 								
 								</span>
 								<span className="text-xs text-black font-bold">
-									SCORE: 0
+									SCORE: {plyr.score}
 								</span>
 								
 							</div>
 
 							<div className='border bg-black flex justify-center items-center'>
-								<img src="/player.svg" alt="game icon" className="w-16 p-2" />
+								<div className="flex flex-col border border-white">
+									{Array.from({ length: 20 }, (_, y) => (
+									<div key={y} className="flex">
+										{plyr?.spectrum?.map((h, x) => (
+										<div
+											key={x}
+											className={`w-2 h-2 
+											${20 - y <= h ? 'bg-blue-500' : 'bg-black-100'}
+											`}
+										/>
+										))}
+									</div>
+									))}
+								</div>
 							</div>
 						</div>
 					))}
@@ -40,13 +64,13 @@ const PlayersUI = () => {
 			</div>
 
             <div className=" flex border justify-center items-center my-4">
-                {!started && true && (
+                {!started && players.find(p => p.username === username)?.host && (
                     <div className="bg-white flex flex-row  border-2 shadow-lg w-full">  
                         <div className='w-16 border bg-black flex justify-center items-center'>
                             <img src="/start.svg" alt="game icon" className="w-8 h-8 p-1" />
                         </div>
                         <div className="hover:bg-black flex justify-center hover:text-white hover:border-l-2 w-full hover:border-white">
-                            <button className="px-6 py-2 font-bold hover:cursor-pointer text-center" onClick={() => 0}>Start Game</button>
+                            <button className="px-6 text-black hover:text-white py-2 font-bold hover:cursor-pointer  text-center" onClick={handleStart}>Start Game</button>
                         </div>
                     </div>
                 )}
@@ -56,37 +80,6 @@ const PlayersUI = () => {
 	)
 }
 
-const SidePanelUI = () => {
-	return (
-		<div className="flex flex-col gap-6 w-52">
-
-			{/* NEXT */}
-			<div className="bg-white/5 border border-white/10 p-4 rounded-xl backdrop-blur-md shadow-lg">
-				<h2 className="text-sm uppercase tracking-wider text-white/60 mb-2">
-				Next
-				</h2>
-				<div className="w-24 h-24 bg-black border border-white/10 mx-auto rounded flex items-center justify-center" />
-			</div>
-
-			{/* SCORE */}
-			<div className="bg-white/5 border border-white/10 p-4 rounded-xl text-center backdrop-blur-md shadow-lg">
-				<h2 className="text-sm uppercase tracking-wider text-white/60">
-				Score
-				</h2>
-				<p className="text-3xl font-bold mt-2">0</p>
-			</div>
-
-			{/* CONTROLS */}
-			<div className="bg-white/5 border border-white/10 p-4 rounded-xl text-xs text-white/70 backdrop-blur-md shadow-lg space-y-1">
-				<p>← → Move</p>
-				<p>↑ Rotate</p>
-				<p>↓ Soft drop</p>
-				<p>Space Hard drop</p>
-			</div>
-
-        </div>
-	)
-}
 
 // players.find(p => p.username === username)?.host
 
@@ -94,7 +87,6 @@ const SidePanelUI = () => {
  <span className=" px-2 text-xs text-gray-500">
 	ID : [{plyr.id}]
 </span>
-
 */
 
-export default SidePanelUI;
+export default PlayersUI;

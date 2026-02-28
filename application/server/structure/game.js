@@ -1,11 +1,12 @@
 import { Piece } from "./piece.js";
 
-const IN_STACK = 20
+const IN_STACK = 3
 
 export class Game{
 
     constructor(name){
         this.name = name
+        this.ends = false
         this.stack = [];
         this.players = [];
         this.full = false;
@@ -44,7 +45,9 @@ export class Game{
         this.started = true
     }
 
-    more() { while (IN_STACK >= this.stack.length){ this.generated(IN_STACK) } } 
+    more() {
+        this.generated(1)
+    } 
 
     findPiece(index) { this.more(); return this.stack[index]}
 

@@ -73,15 +73,53 @@ io.on('connection', (socket) => {
         if (game) {
             const player = game.players.find(p => p.id === socket.id);
             if (player && player.host) {
+                info('==> : ', room)
                 game.start();
-                io.to(room).emit('started', {
+                io.to(room).emit('starting', {
                     stack: game.stack,
                     players: game.players
                 });
             }
         }
-
     })
+
+    socket.on('status', (data) => {
+        if (!data) 
+            return;
+        const {room, spec, score} = data
+        if (!room || !spec || !score) 
+            return;
+        if (DEBUG) {info('start room : ', room);}
+        const game = games.get(room);
+        if (game) {
+            const player = game.players.find(p => p.id === socket.id);
+            if (player && !player.lost) {
+                player.spectrum = spec
+                player.score += score
+                console.log('arrived !!!')
+                io.to(room).emit('status', {
+                    players: game.players
+                });
+            }
+        }
+    })
+
+
+    socket.on('more', (data) => {
+        if (!data) 
+            return;
+        const {room} = data
+        if (!room) 
+            return;
+        if (DEBUG) {info('start room : ', room);}
+        const game = games.get(room);
+        if (game) {
+            game.more();
+            io.to(room).emit('more', {stack: game.stack});
+        }
+    })
+
+
     socket.on('disconnect', () => {
         console.log('Disconnected:', socket.id);
         games.forEach((game, room) => {

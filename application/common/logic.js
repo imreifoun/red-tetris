@@ -124,12 +124,16 @@ export const clearLines = (board) => {
     const filteredBoard = board.filter(row => row.some(cell => cell === 0));
     const cleared = ROWS - filteredBoard.length;
     const newLines = Array.from({ length: cleared }, () => Array(COLS).fill(0));
+
+    const scores = [0, 100, 300, 500, 800];
+    const score = scores[cleared] || 0;
+
     return {
         board: [...newLines, ...filteredBoard],
-        cleared
+        cleared,
+        score
     };
 };
-
 
 // Generates the spectrum of a board (height of each column).
 export const getSpectrum = (board) => {

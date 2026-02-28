@@ -8,8 +8,10 @@ export class Player{
         this.board = null;
         this.spectrum = []
         this.piece = 0
+        this.score = 0
     }
     reset(){
+        this.score = 0
         this.piece = 0
         this.lost = false;
         this.board = null;
