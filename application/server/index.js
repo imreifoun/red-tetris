@@ -10,7 +10,7 @@ import { createTetrisServer } from './app.js';
 
 
 createTetrisServer({ port: 4045, host: "0.0.0.0", debugMode: true });
-const DEBUG = true
+const DEBUG = false
 const PORT = 4044
 const HOST = '0.0.0.0'
 
@@ -76,7 +76,6 @@ io.on('connection', (socket) => {
         if (game) {
             const player = game.players.find(p => p.id === socket.id);
             if (player && player.host) {
-                info('==> : ', room)
                 game.start();
                 io.to(room).emit('starting', {
                     stack: game.stack,
@@ -86,11 +85,25 @@ io.on('connection', (socket) => {
         }
     })
 
+    socket.on('penalty', (data) => {
+        const { room, count } = data;
+
+        if (!room || count == null) return;
+
+        const game = games.get(room);
+        if (!game) return;
+
+        const player = game.players.find(p => p.id === socket.id);
+        if (!player || player.lost) return;
+        socket.to(room).emit('on_penalty', { count });
+    });
+
+
     socket.on('status', (data) => {
         if (!data) 
             return;
         const {room, spec, score} = data
-        if (!room || !spec || !score) 
+        if (!room || !spec ) 
             return;
         if (DEBUG) {info('start room : ', room);}
         const game = games.get(room);
@@ -99,7 +112,6 @@ io.on('connection', (socket) => {
             if (player && !player.lost) {
                 player.spectrum = spec
                 player.score += score
-                console.log('arrived !!!')
                 io.to(room).emit('status', {
                     players: game.players
                 });

@@ -1,5 +1,5 @@
 import io from 'socket.io-client'
-import { in_more, starting, update, status } from '../redux/slice';
+import { in_more, starting, update, status, on_penalty } from '../redux/slice';
 
 const socketMiddleware = (store) => {
     let socket = null;
@@ -25,6 +25,9 @@ const socketMiddleware = (store) => {
                 socket.on('status', (data) => {
                     store.dispatch(status(data));
                 });
+                socket.on('on_penalty', (data) => {
+                    store.dispatch(on_penalty(data));
+                });
         
             case 'socket/join':
                 if (socket) socket.emit('join', action.payload);
@@ -37,6 +40,9 @@ const socketMiddleware = (store) => {
                 break;
             case 'socket/start':
                 if (socket) socket.emit('start', action.payload);
+                break;
+            case 'socket/penalty':
+                if (socket) socket.emit('penalty', action.payload);
                 break;
 
         }

@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 
 const PlayersUI = () => {
 
-	const {room, username, players = [], started, score } = useSelector(state => state.game)
+	const {room, username, players = [], started } = useSelector(state => state.game)
 
 	const dispatch = useDispatch()
 
@@ -12,6 +12,7 @@ const PlayersUI = () => {
   	};
 
 	useEffect(() => {
+		//console.log('plyr?.spectrum ', players[0]?.spectrum)
 		return;
 	}, [started, players])
 
@@ -19,7 +20,6 @@ const PlayersUI = () => {
 		<div className="p-6 max-w-md h-125 flex flex-col justify-between overflow-scroll mx-auto bg-black border shadow-xl ">
 			
 			<div>
-
 				<h2 className="text-2xl font-bold mb-4 text-center">
 					Players 
 				</h2>

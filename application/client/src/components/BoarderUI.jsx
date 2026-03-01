@@ -37,7 +37,13 @@ export default function BoarderUI (){
 			const { board: clearedBoard, cleared , score: in_score  } = clearLines(placedBoard)
 			dispatch(new_board({ board: clearedBoard, score: in_score }))
 			if (in_score > 0)
-				dispatch({type: 'socket/status', payload : {room: room, score: score + in_score, spec: getSpectrum(clearedBoard) }})
+				dispatch({type: 'socket/status', payload : {room: room, spec: getSpectrum(clearedBoard), score: score + in_score}})
+			console.log('cleared : ', cleared)
+			if (cleared > 1)
+			{
+				console.log('cleared 2 : ', cleared)
+        		dispatch({ type: 'socket/penalty', payload: { room, count: cleared - 1 }});
+			}
 
 			dispatch(new_piece({}))
 			positionRef.current = { x: POS_X, y: POS_Y }
@@ -121,7 +127,7 @@ export default function BoarderUI (){
 
 	useEffect(() => {
 		dispatch(new_spec({spec: getSpectrum(board)}))
-		dispatch({type: 'socket/status', payload : {room: room, spec: getSpectrum(board)}})
+		dispatch({type: 'socket/status', payload : {room: room, spec: getSpectrum(board), score: 0}})
 	}, [board])
 
 	useEffect(() => {
@@ -157,12 +163,14 @@ export default function BoarderUI (){
 						let color = 'black'
 
 						if (cell !== 0) {
+							
 							color = cell
 						}
 
 						if (isPiece) {
 							color = stack[piece]?.color
 						}
+						
 
 						return (<div key={x} style={{ backgroundColor: color, border: '1px solid rgba(255,255,255,0.03)' }} className="h-[35px] w-[35px] border-black "></div>)
 					})}

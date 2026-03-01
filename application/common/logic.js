@@ -121,7 +121,12 @@ export const insertPiece = (board, shape, x, y, value) => {
 
 // Clears full lines from the board and returns the new board and line count.
 export const clearLines = (board) => {
-    const filteredBoard = board.filter(row => row.some(cell => cell === 0));
+    const filteredBoard = board.filter(row => {
+        const isFull = row.every(cell => cell !== 0);
+        const isPenalty = row.every(cell => cell === 'white');
+        return !isFull || isPenalty;
+    });
+
     const cleared = ROWS - filteredBoard.length;
     const newLines = Array.from({ length: cleared }, () => Array(COLS).fill(0));
 
@@ -148,6 +153,18 @@ export const getSpectrum = (board) => {
     }
     return spectrum;
 };
+
+// Adds penalty lines at the bottom of the board.
+export const addPenaltyLines = (board, lines) => {
+    if (lines <= 0) return board;
+    const penalty = Array(COLS).fill('white');
+    const newBoard = board.slice(lines);
+    for (let i = 0; i < lines; i++) {
+        newBoard.push([...penalty]);
+    }
+    return newBoard;
+};
+
 
 // Creates an empty game board.
 export const createEmptyBoard = () => {
