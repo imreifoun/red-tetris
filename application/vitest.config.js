@@ -5,11 +5,25 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: "jsdom",
+    include: ["tests/**/*.{test,spec}.{js,jsx}"],
     setupFiles: ["./tests/setup.js"],
     coverage: {
       provider: "v8",
       reporter: ["text", "html"],
-      include: ["client/src", "server", "common"],
+      // instrument all source files
+      include: [
+        "client/src/**/*.{js,jsx}",
+        "server/**/*.{js,jsx}",
+        "common/**/*.{js,jsx}",
+      ],
+      exclude: [
+        "**/*.css",
+        "**/node_modules/**",
+        "**/coverage/**",
+        "client/src/main.jsx",
+        "client/src/dev-only/**",
+        "server/index.js",
+      ],
       thresholds: {
         lines: 70,
         functions: 70,
