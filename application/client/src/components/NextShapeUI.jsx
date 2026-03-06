@@ -3,9 +3,9 @@ import { useSelector } from "react-redux"
 export default function NextShapeUI() {
 	const { stack, piece } = useSelector(state => state.game)
 
-	const currentPiece = stack[piece]
+	const currentPiece = stack[piece + 1]
 	if (!currentPiece?.shape) 
-		return null
+		return <></>
 
 	return (
 		<div className='w-24 h-24 bg-black border border-white/10 mx-auto rounded flex items-center justify-center'>

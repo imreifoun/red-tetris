@@ -1,20 +1,11 @@
-import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux"
 
 const PlayersUI = () => {
 
+	const dispatch = useDispatch()
 	const {room, username, players = [], started } = useSelector(state => state.game)
 
-	const dispatch = useDispatch()
-
-	const handleStart = () => {
-    	dispatch({ type: 'socket/start', payload: { room } });
-  	};
-
-	useEffect(() => {
-		//console.log('plyr?.spectrum ', players[0]?.spectrum)
-		return;
-	}, [started, players])
+	const handleStart = () => {dispatch({ type: 'socket/start', payload: { room } }); };
 
 	return (
 		<div className="p-6 max-w-md h-125 flex flex-col justify-between overflow-scroll mx-auto bg-black border shadow-xl ">
@@ -24,13 +15,13 @@ const PlayersUI = () => {
 					Players 
 				</h2>
 
-				<div className="flex flex-col gap-3 ">
+				<div className="flex flex-col">
 					{players.map((plyr) => (
 						<div
 							key={plyr.id}
-							className="flex items-center justify-between  border-2 bg-gray-50 hover:bg-gray-100 transition"
+							className="flex items-center justify-between  border-2 bg-gray-50 hover:bg-gray-100"
 						>
-							<div className="flex flex-col py-2 px-2">
+							<div className="flex flex-col p-4">
 								<span className="font-semibold text-gray-800 ">
 									{plyr.username}
 									
@@ -79,14 +70,5 @@ const PlayersUI = () => {
 		</div>
 	)
 }
-
-
-// players.find(p => p.username === username)?.host
-
-/*
- <span className=" px-2 text-xs text-gray-500">
-	ID : [{plyr.id}]
-</span>
-*/
 
 export default PlayersUI;

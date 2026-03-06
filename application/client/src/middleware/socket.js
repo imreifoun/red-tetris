@@ -1,34 +1,39 @@
 import io from 'socket.io-client'
 import { in_more, starting, update, status, on_penalty } from '../redux/slice';
+import { MACHINE_IP } from '../../config';
 
 const socketMiddleware = (store) => {
     let socket = null;
+
+    const setupListeners = (socket) => {
+        socket.on('update', (data) => {
+            store.dispatch(update(data));
+        });
+
+        socket.on('starting', (data) => {
+            store.dispatch(starting(data));
+        });
+
+        socket.on('more', (data) => {
+            store.dispatch(in_more(data));
+        });
+
+        socket.on('status', (data) => {
+            store.dispatch(status(data));
+        });
+
+        socket.on('on_penalty', (data) => {
+            store.dispatch(on_penalty(data));
+        });
+    };
+
     return (next) => (action) => {
-        //console.log("ACTION:", action)
         switch (action.type) {
             case 'socket/connect':
-                if (socket) socket.disconnect()
-                socket = io('http://127.0.0.1:4044')
-
-                socket.on('update', (data) => {
-                    store.dispatch(update(data));
-                });
-
-                socket.on('starting', (data) => {
-                    store.dispatch(starting(data));
-                });
-
-                socket.on('more', (data) => {
-                    store.dispatch(in_more(data));
-                });
-
-                socket.on('status', (data) => {
-                    store.dispatch(status(data));
-                });
-                socket.on('on_penalty', (data) => {
-                    store.dispatch(on_penalty(data));
-                });
-        
+                if (socket) socket.disconnect();
+                socket = io(`http://${MACHINE_IP}:4044`);
+                setupListeners(socket);
+                break;
             case 'socket/join':
                 if (socket) socket.emit('join', action.payload);
                 break;
@@ -44,10 +49,9 @@ const socketMiddleware = (store) => {
             case 'socket/penalty':
                 if (socket) socket.emit('penalty', action.payload);
                 break;
-
         }
         return next(action);
-    }
-}
+    };
+};
 
 export default socketMiddleware;

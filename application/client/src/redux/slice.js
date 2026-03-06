@@ -11,29 +11,11 @@ const initialState = {
     stack: [],
     players: [],
     loss: false,
-    winner: null,
     username: null,
     started: false,
     game_over: false,
     board: Array.from({ length: ROWS }, () => Array(COLS).fill(0)),
 }
-
-function devOnly(board) {
-    if (!board || board.length === 0) return board;
-
-    const y = board.length;
-    const x = board[0].length;
-
-
-    for (let i = y - 2; i < y; i++) {
-        for (let j = 0; j < x; j++) {
-            board[i][j] = 'yellow';
-        }
-    }
-
-    return board;
-}
-
 
 const slice = createSlice({
     name: 'game',
@@ -53,7 +35,6 @@ const slice = createSlice({
             state.stack = action.payload.stack;
             state.players = action.payload.players;
             state.board = Array.from({ length: ROWS }, () => Array(COLS).fill(0));
-            state.board = devOnly(state.board)
         },
         on_penalty: (state, action) => {
             const count = action.payload.count;
@@ -63,7 +44,6 @@ const slice = createSlice({
             for (let i = 0; i < count; i++) {
                 newBoard.push([...penalty]);
             }
-            console.log('DEBUG 3 !!!')
             state.board = newBoard;
         },
         status: (state, action) => {

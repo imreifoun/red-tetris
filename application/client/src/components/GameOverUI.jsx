@@ -3,7 +3,6 @@ import { on_game_over } from "../redux/slice"
 
 export default function GameOverUI() {
 	const dispatch = useDispatch()
-	const { room } = useSelector(state => state.game)
 
 	const handleExit = () => {
 		window.location.hash = ''

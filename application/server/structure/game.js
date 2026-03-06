@@ -18,12 +18,6 @@ export class Game{
         this.players.push(player)
     }
 
-    winnerPlayer() {
-        const winner = this.players.filter(plyr => !plyr.lost)
-        if (winner.length > 1) return winner[0]
-        return null
-    }
-
     deletePlayer(player){
         if (this.players.length > 0)
         {
@@ -45,11 +39,7 @@ export class Game{
         this.started = true
     }
 
-    more() {
-        this.generated(1)
-    } 
-
-    findPiece(index) { this.more(); return this.stack[index]}
+    more() {this.generated(1)} 
 
     generated(seq) { for(let i = 0; i < seq; i++) { this.stack.push(new Piece(Piece.randomPiece()))} }
 }
