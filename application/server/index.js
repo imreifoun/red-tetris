@@ -2,7 +2,6 @@ import path from 'path';
 import debug from "debug";
 import express from 'express';
 import {Server} from 'socket.io';
-import { fileURLToPath } from 'url';
 import { createServer } from 'http';
 import {Game} from './structure/game.js'
 import {Player} from './structure/player.js'
@@ -10,14 +9,12 @@ import { createTetrisServer } from './app.js';
 
 
 createTetrisServer({ port: 4045, host: "0.0.0.0", debugMode: true });
+
 const DEBUG = false
 const PORT = 4044
 const HOST = '0.0.0.0'
 
 const info = debug('server:info'), error = debug('server:error')
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = path.dirname(__filename)
 
 const app = express()
 const httpServer = createServer(app)
@@ -27,10 +24,10 @@ const io = new Server(httpServer, {
     }
 })
 
-app.use(express.static(path.join(__dirname, '../client/dist')))
+app.use(express.static(path.join(import.meta.dirname, '../client/dist')))
 
 app.use((req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+    res.sendFile(path.join(import.meta.dirname, '../client/dist/index.html'));
 });
 
 const games = new Map()
