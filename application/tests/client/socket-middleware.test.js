@@ -87,4 +87,52 @@ describe("socket middleware", () => {
 
     expect(store.dispatch).toHaveBeenCalledWith(update({ players: ["x"], started: true }));
   });
+  it("disconnects old socket when connect is dispatched twice", async () => {
+  const { default: socketMiddleware } = await import("../../client/src/middleware/socket.js");
+
+  const store = makeStore();
+  const next = vi.fn();
+  const mw = socketMiddleware(store)(next);
+
+  const firstSocket = socket;
+  mw({ type: "socket/connect" });
+
+  // new fake socket for second connect
+  const secondSocket = {
+    disconnect: vi.fn(),
+    on: vi.fn(),
+    emit: vi.fn(),
+  };
+
+  ioMock.mockReturnValueOnce(secondSocket);
+
+  mw({ type: "socket/connect" });
+
+  expect(firstSocket.disconnect).toHaveBeenCalled();
+});
+
+it("does not emit status when socket is not connected", async () => {
+  const { default: socketMiddleware } = await import("../../client/src/middleware/socket.js");
+
+  const store = makeStore();
+  const next = vi.fn();
+  const mw = socketMiddleware(store)(next);
+
+  mw({ type: "socket/status", payload: { room: "123" } });
+
+  expect(socket.emit).not.toHaveBeenCalled();
+  expect(next).toHaveBeenCalled();
+});
+it("does not emit penalty when socket is not connected", async () => {
+  const { default: socketMiddleware } = await import("../../client/src/middleware/socket.js");
+
+  const store = makeStore();
+  const next = vi.fn();
+  const mw = socketMiddleware(store)(next);
+
+  mw({ type: "socket/penalty", payload: { count: 2 } });
+
+  expect(socket.emit).not.toHaveBeenCalled();
+  expect(next).toHaveBeenCalled();
+});
 });
