@@ -47,24 +47,22 @@ describe("game slice (full)", () => {
     expect(state.game_over).toBe(true);
   });
 
-  it("starting resets state parts, sets started, and applies devOnly (last 2 rows yellow)", () => {
-    const stack = [{ shape: [[1]], color: "cyan" }];
-    const players = [{ id: "1", username: "fred" }];
+  it("starting resets state parts, sets started, and creates a fresh empty board", () => {
+  const stack = [{ shape: [[1]], color: "cyan" }];
+  const players = [{ id: "1", username: "fred" }];
 
-    const state = reducer(undefined, starting({ stack, players }));
+  const state = reducer(undefined, starting({ stack, players }));
 
-    expect(state.loss).toBe(false);
-    expect(state.winner).toBe(null);
-    expect(state.started).toBe(true);
-    expect(state.stack).toEqual(stack);
-    expect(state.players).toEqual(players);
+  expect(state.loss).toBe(false);
+  expect(state.started).toBe(true);
+  expect(state.stack).toEqual(stack);
+  expect(state.players).toEqual(players);
 
-    // devOnly paints bottom 2 rows yellow
-    expect(state.board[ROWS - 1][0]).toBe("yellow");
-    expect(state.board[ROWS - 2][COLS - 1]).toBe("yellow");
-    // row above should still be 0
-    expect(state.board[ROWS - 3][0]).toBe(0);
-  });
+  // board should be reset to empty
+  expect(state.board).toHaveLength(ROWS);
+  expect(state.board[0]).toHaveLength(COLS);
+  expect(state.board.flat().every((cell) => cell === 0)).toBe(true);
+});
 
   it("status replaces players only", () => {
     const s1 = reducer(undefined, status({ players: ["a", "b"] }));
