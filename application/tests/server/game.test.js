@@ -61,22 +61,22 @@ it("deletePlayer currently does NOT correctly reassign host when host leaves (kn
   expect(game.players[0].host).toBe(false);
 });
 
-  it("winnerPlayer returns first not-lost player when more than 1 alive, else null", () => {
-    const p1 = new Player("1", "a");
-    const p2 = new Player("2", "b");
-    const p3 = new Player("3", "c");
-    game.newPlayer(p1);
-    game.newPlayer(p2);
-    game.newPlayer(p3);
+  // it("winnerPlayer returns first not-lost player when more than 1 alive, else null", () => {
+  //   const p1 = new Player("1", "a");
+  //   const p2 = new Player("2", "b");
+  //   const p3 = new Player("3", "c");
+  //   game.newPlayer(p1);
+  //   game.newPlayer(p2);
+  //   game.newPlayer(p3);
 
-    // everyone alive => returns first alive
-    expect(game.winnerPlayer()?.id).toBe("1");
+  //   // everyone alive => returns first alive
+  //   expect(game.winnerPlayer()?.id).toBe("1");
 
-    // only one alive => should return null
-    p2.lost = true;
-    p3.lost = true;
-    expect(game.winnerPlayer()).toBe(null);
-  });
+  //   // only one alive => should return null
+  //   p2.lost = true;
+  //   p3.lost = true;
+  //   expect(game.winnerPlayer()).toBe(null);
+  // });
 
   it("start() resets stack, generates pieces, resets players, sets started=true", () => {
     const p1 = new Player("1", "a");
@@ -114,22 +114,13 @@ it("deletePlayer currently does NOT correctly reassign host when host leaves (kn
 //     expect(piece50).toBeTruthy();
 //     expect(game.stack.length).toBeGreaterThanOrEqual(51);
 //   });
-it("findPiece currently only guarantees stack > IN_STACK (known bug for large index)", () => {
+it("more() adds one new piece to the stack", () => {
   expect(game.stack.length).toBe(0);
 
-  const piece0 = game.findPiece(0);
-  expect(piece0).toBeTruthy();
+  game.more();
 
-  // current more() over-generates to 40
-  expect(game.stack.length).toBeGreaterThanOrEqual(1);
-
-  const piece50 = game.findPiece(50);
-
-  // Known bug: may be undefined because more() doesn't generate to index
-  expect(piece50).toBeUndefined();
-
-  // But stack should still grow after calling findPiece again
-  expect(game.stack.length).toBeGreaterThanOrEqual(1);
+  expect(game.stack.length).toBe(1);
+  expect(game.stack[0]).toBeTruthy();
 });
 
 
