@@ -4,7 +4,6 @@ import { in_more, starting, update, status, on_penalty } from '../redux/slice';
 const MACHINE_IP = import.meta.env.VITE_MACHINE_IP
 const PORT = import.meta.env.VITE_SOCKET_PORT || "4044"
 
-console.log(MACHINE_IP)
 const socketMiddleware = (store) => {
     let socket = null;
 
