@@ -6,13 +6,17 @@ import { createServer } from 'http';
 import {Game} from './structure/game.js'
 import {Player} from './structure/player.js'
 import { createTetrisServer } from './app.js';
+import dotenv from 'dotenv'
+
+dotenv.config()
+
+const PORT = process.env.VITE_SOCKET_PORT
+const MACHINE_IP = process.env.VITE_MACHINE_IP
 
 
-createTetrisServer({ port: 4045, host: "0.0.0.0", debugMode: true });
+createTetrisServer({ port: 4045, host: MACHINE_IP, debugMode: true });
 
 const DEBUG = false
-const PORT = 4044
-const HOST = '0.0.0.0'
 
 const info = debug('server:info'), error = debug('server:error')
 
@@ -99,7 +103,7 @@ io.on('connection', (socket) => {
     socket.on('status', (data) => {
         if (!data) 
             return;
-        const {room, spec, score} = data
+        const {room, spec, score, loss} = data
         if (!room || !spec ) 
             return;
         if (DEBUG) {info('start room : ', room);}
@@ -109,6 +113,8 @@ io.on('connection', (socket) => {
             if (player && !player.lost) {
                 player.spectrum = spec
                 player.score += score
+                if (loss)
+                    player.lost = true
                 io.to(room).emit('status', {
                     players: game.players
                 });
@@ -150,7 +156,7 @@ io.on('connection', (socket) => {
 })
 
 httpServer.listen(PORT, () => {
-    info(`server now is running on http://${HOST}:${PORT}`)
+    info(`server now is running on http://${MACHINE_IP}:${PORT}`)
 })
 
 
