@@ -1,6 +1,6 @@
 import { Piece } from "./piece.js";
 
-const IN_STACK = 3
+const IN_STACK = 2000
 
 export class Game{
 
