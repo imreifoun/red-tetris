@@ -1,5 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+const MACHINE_IP = import.meta.env.VITE_MACHINE_IP
+
 describe("socket middleware", () => {
   let socket;
   let ioMock;
@@ -33,7 +35,7 @@ describe("socket middleware", () => {
 
     mw({ type: "socket/connect" });
 
-    expect(ioMock).toHaveBeenCalledWith("http://127.0.0.1:4044");
+    expect(ioMock).toHaveBeenCalledWith(`http://${MACHINE_IP}:4044`);
     expect(socket.on).toHaveBeenCalled();
     expect(socket.on.mock.calls.some((c) => c[0] === "update")).toBe(true);
     expect(next).toHaveBeenCalled();

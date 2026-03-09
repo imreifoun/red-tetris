@@ -87,12 +87,15 @@ describe("game slice (full)", () => {
     expect(state.stack[0].shape).toEqual(rotated);
   });
 
-  it("in_more replaces stack", () => {
-    const base = reducer(undefined, starting({ stack: [{ shape: [[0]] }], players: [] }));
-    const newStack = [{ shape: [[9]] }, { shape: [[8]] }];
-    const state = reducer(base, in_more({ stack: newStack }));
-    expect(state.stack).toEqual(newStack);
-  });
+  it("in_more appends new stack items to existing stack", () => {
+  const initialStack = [{ shape: [[0]] }];
+  const base = reducer(undefined, starting({ stack: initialStack, players: [] }));
+
+  const newStack = [{ shape: [[9]] }, { shape: [[8]] }];
+  const state = reducer(base, in_more({ stack: newStack }));
+
+  expect(state.stack).toEqual([...initialStack, ...newStack]);
+});
 
   it("loser sets loss=true and game_over=true", () => {
     const state = reducer(undefined, loser());

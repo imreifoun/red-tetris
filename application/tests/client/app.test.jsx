@@ -19,7 +19,7 @@ describe("App", () => {
   });
 
   it("when hash matches, dispatches setup + socket actions and shows game UI", async () => {
-    window.location.hash = "#123@areifoun";
+    window.location.hash = "#123[areifoun]";
 
     const store = configureStore({
       reducer: { game: gameReducer },
