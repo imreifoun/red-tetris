@@ -67,7 +67,7 @@ const slice = createSlice({
             state.stack[action.payload.current].shape = action.payload.shape
         },
         in_more : (state, action) => {
-            state.stack = action.payload.stack
+            state.stack = [...state.stack,...action.payload.stack]
         },
         loser: (state, action) => {
             state.loss = true
