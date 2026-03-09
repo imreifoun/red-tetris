@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { Game } from "../../server/structure/game.js";
 import { Player } from "../../server/structure/player.js";
 
@@ -33,50 +33,21 @@ describe("Game", () => {
     expect(game.players.map(p => p.id)).toEqual(["1"]);
   });
 
-//   it("deletePlayer reassigns host if host leaves", () => {
-//     const p1 = new Player("1", "a");
-//     const p2 = new Player("2", "b");
-//     game.newPlayer(p1); // host=true
-//     game.newPlayer(p2);
 
-//     // remove host
-//     game.deletePlayer("1");
-//     expect(game.players).toHaveLength(1);
-//     expect(game.players[0].id).toBe("2");
-//     // should become host
-//     expect(game.players[0].host).toBe(true);
-//   });
-it("deletePlayer currently does NOT correctly reassign host when host leaves (known bug)", () => {
-  const p1 = new Player("1", "a");
-  const p2 = new Player("2", "b");
-  game.newPlayer(p1); // host=true
-  game.newPlayer(p2);
+  it("deletePlayer currently does NOT correctly reassign host when host leaves (known bug)", () => {
+    const p1 = new Player("1", "a");
+    const p2 = new Player("2", "b");
+    game.newPlayer(p1); // host=true
+    game.newPlayer(p2);
 
-  game.deletePlayer("1");
+    game.deletePlayer("1");
 
-  expect(game.players).toHaveLength(1);
-  expect(game.players[0].id).toBe("2");
+    expect(game.players).toHaveLength(1);
+    expect(game.players[0].id).toBe("2");
 
-  // Current implementation bug: host may stay false
-  expect(game.players[0].host).toBe(false);
-});
-
-  // it("winnerPlayer returns first not-lost player when more than 1 alive, else null", () => {
-  //   const p1 = new Player("1", "a");
-  //   const p2 = new Player("2", "b");
-  //   const p3 = new Player("3", "c");
-  //   game.newPlayer(p1);
-  //   game.newPlayer(p2);
-  //   game.newPlayer(p3);
-
-  //   // everyone alive => returns first alive
-  //   expect(game.winnerPlayer()?.id).toBe("1");
-
-  //   // only one alive => should return null
-  //   p2.lost = true;
-  //   p3.lost = true;
-  //   expect(game.winnerPlayer()).toBe(null);
-  // });
+    // Current implementation bug: host may stay false
+    expect(game.players[0].host).toBe(false);
+  });
 
   it("start() resets stack, generates pieces, resets players, sets started=true", () => {
     const p1 = new Player("1", "a");
@@ -101,27 +72,14 @@ it("deletePlayer currently does NOT correctly reassign host when host leaves (kn
     expect(game.players[1].piece).toBe(0);
   });
 
-//   it("findPiece ensures stack is big enough", () => {
-//     // stack empty initially
-//     expect(game.stack.length).toBe(0);
+  it("more() adds one new piece to the stack", () => {
+    expect(game.stack.length).toBe(0);
 
-//     const piece0 = game.findPiece(0);
-//     expect(piece0).toBeTruthy();
-//     expect(game.stack.length).toBeGreaterThanOrEqual(20);
+    game.more();
 
-//     // request far index triggers more generation
-//     const piece50 = game.findPiece(50);
-//     expect(piece50).toBeTruthy();
-//     expect(game.stack.length).toBeGreaterThanOrEqual(51);
-//   });
-it("more() adds one new piece to the stack", () => {
-  expect(game.stack.length).toBe(0);
-
-  game.more();
-
-  expect(game.stack.length).toBe(1);
-  expect(game.stack[0]).toBeTruthy();
-});
+    expect(game.stack.length).toBe(1);
+    expect(game.stack[0]).toBeTruthy();
+  });
 
 
 });
