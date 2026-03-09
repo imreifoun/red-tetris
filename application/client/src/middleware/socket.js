@@ -1,7 +1,10 @@
 import io from 'socket.io-client'
 import { in_more, starting, update, status, on_penalty } from '../redux/slice';
-import { MACHINE_IP } from '../../config';
 
+const MACHINE_IP = import.meta.env.VITE_MACHINE_IP
+const PORT = import.meta.env.VITE_SOCKET_PORT || "4044"
+
+console.log(MACHINE_IP)
 const socketMiddleware = (store) => {
     let socket = null;
 
@@ -31,7 +34,7 @@ const socketMiddleware = (store) => {
         switch (action.type) {
             case 'socket/connect':
                 if (socket) socket.disconnect();
-                socket = io(`http://${MACHINE_IP}:4044`);
+                socket = io(`http://${MACHINE_IP}:${PORT}`);
                 setupListeners(socket);
                 break;
             case 'socket/join':

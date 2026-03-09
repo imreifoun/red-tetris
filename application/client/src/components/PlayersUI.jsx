@@ -5,6 +5,13 @@ const PlayersUI = () => {
 	const dispatch = useDispatch()
 	const {room, username, players = [], started } = useSelector(state => state.game)
 
+	const winner = () => {
+		const l = players.filter((e) => e.lost)
+		if (l.length == 1 && players.length > 1)
+			return 'bg-green-500'
+		return 'bg-gray-50'
+	} 
+
 	const handleStart = () => {dispatch({ type: 'socket/start', payload: { room } }); };
 
 	return (
@@ -19,7 +26,7 @@ const PlayersUI = () => {
 					{players.map((plyr) => (
 						<div
 							key={plyr.id}
-							className="flex items-center justify-between  border-2 bg-gray-50 hover:bg-gray-100"
+							className={`flex items-center justify-between  border-2 ${plyr.lost ? 'bg-red-500' : winner()  }`}
 						>
 							<div className="flex flex-col p-4">
 								<span className="font-semibold text-gray-800 ">

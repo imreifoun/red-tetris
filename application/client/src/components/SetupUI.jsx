@@ -14,7 +14,7 @@ function SetupUI() {
 				</div>
 
 				<p className="text-gray-700 text-sm mx-2 mb-2 text-center">
-					Please use <span className="text-gray-950 font-bold">#room@username</span> in the URL
+					Please use <span className="text-gray-950 font-bold">#room[username]</span> in the URL
 				</p>
 			</div>
       	</div>

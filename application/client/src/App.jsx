@@ -67,26 +67,33 @@ function TetrisUI() {
 }
 
 function App() {
-
 	const dispatch = useDispatch()
-	const { room, username } = useSelector(state => state.game)
+	const { room, username } = useSelector((state) => state.game)
 
 	useEffect(() => {
-		const hash = window.location.hash
-		const matched = hash.match(/^#(\d+)@([a-zA-Z]+)$/)
-		if (matched) {
-			dispatch(setup({ room: matched[1], username: matched[2] }))
+		const joinFromHash = () => {
+			const matched = window.location.hash.match(/^#(\d+)\[([a-zA-Z]+)\]$/)
+
+			if (!matched) return
+
+			const [, room, username] = matched
+
+			dispatch(setup({ room, username }))
 			dispatch({ type: 'socket/connect' })
-			dispatch({ type: 'socket/join', payload: { room: matched[1], username: matched[2] } })
+			dispatch({ type: 'socket/join', payload: { room, username } })
 		}
 
-	}, [])
+		joinFromHash()
+		window.addEventListener('hashchange', joinFromHash)
 
-	if (!room || !username)
-		return <SetupUI />
+		return () => {
+			window.removeEventListener('hashchange', joinFromHash)
+		}
+	}, [dispatch])
 
-	return (<TetrisUI />)
+	if (!room || !username) return <SetupUI />
+
+	return <TetrisUI />
 }
-
 
 export default App

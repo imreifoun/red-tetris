@@ -41,6 +41,15 @@ export default function BoarderUI() {
 		dispatch({type: "socket/status", payload: { room, spec, score: score }});
 	}, [board, started]);
 
+	useEffect(() => {
+		if(loss)
+		{
+			const spec = getSpectrum(board);
+			dispatch({type: "socket/status", payload: { room, spec, score: score, loss }});
+		}
+
+	}, [loss])
+
 	const reInit = (finalX = position.x, finalY = position.y) => {
 		if (!started || loss || !currentPiece?.shape) return;
 
