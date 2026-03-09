@@ -2,13 +2,15 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { io as clientIO } from "socket.io-client";
 import { createTetrisServer } from "../../server/app.js";
 
+const MACHINE_IP = import.meta.env.VITE_MACHINE_IP
+
 describe("server/index socket integration", () => {
   let server;
   const PORT = 4055;
-  const URL = `http://127.0.0.1:${PORT}`;
+  const URL = `http://${MACHINE_IP}:${PORT}`;
 
   beforeAll(async () => {
-    server = await createTetrisServer({ port: PORT, host: "127.0.0.1" });
+    server = await createTetrisServer({ port: PORT, host: `${MACHINE_IP}` });
   });
 
   afterAll(async () => {
