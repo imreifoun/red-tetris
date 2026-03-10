@@ -23,9 +23,6 @@ describe("Piece", () => {
   });
 
   it("constructor may rotate shape when flip is truthy", () => {
-    // We want:
-    // flip = 1  => Math.random()*2 -> 1.x floored => 1
-    // range = 1 => Math.random()*5 -> 1.x floored => 1 (one rotation)
     const spy = vi.spyOn(Math, "random");
     spy.mockReturnValueOnce(0.9); // flip=1
     spy.mockReturnValueOnce(0.3); // range=1 (floor(1.5)=1) actually 0.3*5=1.5 -> 1
